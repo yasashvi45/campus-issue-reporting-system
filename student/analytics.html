@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Analytics - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <!-- Sidebar will be injected by UI.renderSidebar() -->
+        </aside>
+
+        <main class="main-content">
+            <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" onclick="UI.toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative;">
+                        <i class="ri-search-line" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                        <input type="text" placeholder="Search..." style="padding-left: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); height: 36px; width: 240px; outline: none;">
+                    </div>
+                </div>
+                <div class="navbar-center" style="font-weight: 600; font-size: 15px; letter-spacing: 0.5px;">Campus Issue Reporting System</div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <button class="notification-btn" onclick="UI.toggleNotifications(event)" title="Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notif-badge" class="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <div id="notif-dropdown" class="dropdown-menu" style="display: none;">
+                            <div id="notif-list" class="dropdown-list">
+                                <!-- Notifications -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" onclick="Theme.toggle()" title="Toggle Theme">
+                        <i class="ri-moon-line theme-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" onclick="UI.toggleProfileMenu(event)">
+                        <div class="avatar" id="userAvatar">JD</div>
+                        <div id="profileMenu" class="dropdown-menu" style="display: none;">
+                            <a href="./profile.html" class="nav-link"><i class="ri-user-settings-line"></i> Profile Settings</a>
+                            <a href="./support.html" class="nav-link"><i class="ri-customer-service-2-line"></i> Support</a>
+                            <div class="dropdown-divider" style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+                            <a href="#" onclick="Auth.logout()" class="nav-link danger" style="color: var(--danger);"><i class="ri-logout-box-line"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="card-header" style="margin-bottom: 16px;">
+                <h1 style="margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.5px;">My Activity Analytics</h1>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Total Reports</h3>
+                        <div class="stat-icon icon-primary" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                            <i class="ri-file-list-3-line" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="value" id="totalReports" style="font-size: 36px; font-weight: 700; letter-spacing: -1px; color: var(--text);">0</div>
+                    <div class="stat-label" style="font-size: 13px; color: var(--text-light); margin-top: 8px;">Issues submitted by you</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Resolved Issues</h3>
+                        <div class="stat-icon icon-success" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                            <i class="ri-checkbox-circle-line" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="value" id="resolvedIssues" style="font-size: 36px; font-weight: 700; letter-spacing: -1px; color: var(--success);">0</div>
+                    <div class="stat-label" style="font-size: 13px; color: var(--text-light); margin-top: 8px;">Issues fixed by campus team</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Resolution Rate</h3>
+                        <div class="stat-icon icon-warning" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                            <i class="ri-percent-line" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="value" id="resolutionRate" style="font-size: 36px; font-weight: 700; letter-spacing: -1px; color: var(--warning);">0%</div>
+                    <div class="stat-label" style="font-size: 13px; color: var(--text-light); margin-top: 8px;">Percentage of resolved issues</div>
+                </div>
+            </div>
+
+            <div class="dashboard-bottom">
+                <div class="table-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">Weekly Reporting Trend</h2>
+                        <select id="trendFilter" class="btn btn-outline" onchange="window.loadAnalytics()" style="padding: 6px 10px; border-radius: 8px; font-size: 12px; background: var(--card); border: 1px solid var(--border); color: var(--text); cursor: pointer; outline: none;">
+                            <option value="all">All Time</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="7">Last 7 Days</option>
+                        </select>
+                    </div>
+                    <div style="height: 300px;">
+                        <canvas id="weeklyTrendChart"></canvas>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">Issues by Status</h2>
+                    <div style="height: 300px; margin-top: 20px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/issues.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/charts.js"></script>
+    <script>
+        window.loadAnalytics = function() {
+            const session = Auth.getSession();
+            let myIssues = Issues.getByStudent(session.userId);
+            const filter = document.getElementById('trendFilter')?.value || 'all';
+            
+            if (filter !== 'all') {
+                const days = parseInt(filter);
+                const cutoff = new Date();
+                cutoff.setDate(cutoff.getDate() - days);
+                myIssues = myIssues.filter(i => new Date(i.date) >= cutoff);
+            }
+            
+            document.getElementById('totalReports').innerText = myIssues.length;
+            const resolved = myIssues.filter(i => i.status === 'Resolved').length;
+            document.getElementById('resolvedIssues').innerText = resolved;
+            document.getElementById('resolutionRate').innerText = myIssues.length > 0 ? Math.round((resolved / myIssues.length) * 100) + '%' : '0%';
+
+            // Weekly Trend Chart
+            const weeklyData = {
+                'Mon': 0, 'Tue': 0, 'Wed': 0, 'Thu': 0, 'Fri': 0, 'Sat': 0, 'Sun': 0
+            };
+            // Mock some data if empty
+            if (myIssues.length === 0) {
+                weeklyData['Mon'] = 1; weeklyData['Wed'] = 2; weeklyData['Fri'] = 1;
+            } else {
+                myIssues.forEach(i => {
+                    const date = new Date(i.date);
+                    if (!isNaN(date.getTime())) {
+                        const day = date.toLocaleString('default', { weekday: 'short' });
+                        if (weeklyData[day] !== undefined) weeklyData[day]++;
+                    }
+                });
+            }
+            Charts.renderLineChart('weeklyTrendChart', weeklyData, 'Issues Reported');
+
+            // Status Chart
+            const statusCounts = {
+                'Reported': myIssues.filter(i => i.status === 'Reported').length,
+                'In Progress': myIssues.filter(i => i.status === 'In Progress').length,
+                'Resolved': resolved
+            };
+            Charts.renderStatusChart('statusChart', statusCounts);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.checkAuth('student');
+            UI.renderSidebar();
+            window.loadAnalytics();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Support - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <!-- Sidebar will be injected by UI.renderSidebar() -->
+        </aside>
+
+        <main class="main-content">
+            <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" onclick="UI.toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative;">
+                        <i class="ri-search-line" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                        <input type="text" placeholder="Search..." style="padding-left: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); height: 36px; width: 240px; outline: none;">
+                    </div>
+                </div>
+                <div class="navbar-center" style="font-weight: 600; font-size: 15px; letter-spacing: 0.5px;">Campus Issue Reporting System</div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <button class="notification-btn" onclick="UI.toggleNotifications(event)" title="Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notif-badge" class="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <div id="notif-dropdown" class="dropdown-menu" style="display: none;">
+                            <div id="notif-list" class="dropdown-list">
+                                <!-- Notifications -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" onclick="Theme.toggle()" title="Toggle Theme">
+                        <i class="ri-moon-line theme-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" onclick="UI.toggleProfileMenu(event)">
+                        <div class="avatar" id="adminAvatar">AD</div>
+                        <div id="profileMenu" class="dropdown-menu" style="display: none;">
+                            <!-- Content injected by UI.updateUserInfo() -->
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="card-header">
+                <h1>Admin Support & Help</h1>
+            </div>
+
+            <div class="content-grid">
+                <div style="background: var(--card); padding: 32px; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-l1);">
+                    <h2 id="contact" style="margin-top: 0; font-size: 20px; font-weight: 600;">Contact Technical Support</h2>
+                    <p style="color: var(--text-light); font-size: 14px; margin-bottom: 24px;">Need help with system configuration or encountered a bug? Our technical team is here to help.</p>
+                    <form id="supportForm">
+                        <div class="form-group">
+                            <label style="font-weight: 500; margin-bottom: 8px; display: block;">Issue Type</label>
+                            <select class="form-control" required style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                                <option value="bug">System Bug</option>
+                                <option value="feature">Feature Request</option>
+                                <option value="config">Configuration Help</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight: 500; margin-bottom: 8px; display: block;">Message</label>
+                            <textarea id="message" class="form-control" rows="5" required placeholder="Describe your technical issue in detail..." style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text);"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 16px; padding: 12px 24px; border-radius: 12px; font-weight: 500;">Submit Ticket</button>
+                    </form>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div style="background: var(--card); padding: 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-l1);">
+                        <h2 style="margin-top: 0; font-size: 18px; font-weight: 600;">System Status</h2>
+                        <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+                                <span>Storage</span>
+                                <span style="color: var(--success); font-weight: 600;"><i class="ri-checkbox-circle-fill"></i> Operational</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+                                <span>AI Agent</span>
+                                <span style="color: var(--success); font-weight: 600;"><i class="ri-checkbox-circle-fill"></i> Operational</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+                                <span>Notification Service</span>
+                                <span style="color: var(--success); font-weight: 600;"><i class="ri-checkbox-circle-fill"></i> Operational</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 24px; border-radius: 12px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border: none; box-shadow: var(--shadow-l2);">
+                        <h2 style="color: white; margin-top: 0; margin-bottom: 12px; font-size: 18px; font-weight: 600;">Admin Documentation</h2>
+                        <p style="opacity: 0.9; margin-bottom: 16px; font-size: 14px; line-height: 1.5;">Learn how to manage students, issues, and system settings effectively.</p>
+                        <a href="#" class="btn" style="width: 100%; background: white; color: #0f172a; border: none; font-weight: 600;">View Docs</a>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--card); padding: 32px; border-radius: 12px; margin-top: 24px; border: 1px solid var(--border); box-shadow: var(--shadow-l1);">
+                <h2 style="margin-top: 0; margin-bottom: 24px; font-size: 20px; font-weight: 600;">Admin FAQs</h2>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                        <h4 style="margin-top: 0; margin-bottom: 8px; font-size: 15px; font-weight: 600;">How do I assign an issue to a specific staff member?</h4>
+                        <p style="margin: 0; font-size: 14px; color: var(--text-light); line-height: 1.5;">Go to "Manage Issues", click "Update" on the issue card, and select the staff member from the "Assign Staff" dropdown.</p>
+                    </div>
+                    <div style="background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                        <h4 style="margin-top: 0; margin-bottom: 8px; font-size: 15px; font-weight: 600;">Can I export all issues to an Excel file?</h4>
+                        <p style="margin: 0; font-size: 14px; color: var(--text-light); line-height: 1.5;">Yes, you can use the "Export CSV" button on the Manage Issues page or the "Export Report" quick action on the Dashboard.</p>
+                    </div>
+                    <div style="background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                        <h4 style="margin-top: 0; margin-bottom: 8px; font-size: 15px; font-weight: 600;">How do I disable a student account?</h4>
+                        <p style="margin: 0; font-size: 14px; color: var(--text-light); line-height: 1.5;">Navigate to the "Students" page and click the "Disable" icon (user-forbid) next to the student's name.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.checkAuth('admin');
+            UI.renderSidebar();
+        });
+
+        document.getElementById('supportForm').onsubmit = (e) => {
+            e.preventDefault();
+            Notifications.showToast('Support ticket submitted. Ticket ID: #TIC-' + Math.floor(Math.random() * 10000), 'success');
+            e.target.reset();
+        };
+    </script>
+</body>
+</html>

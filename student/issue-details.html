@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Details - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+        }
+        .message.student {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .message.admin {
+            align-self: flex-start;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 2px;
+        }
+        .message-info {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .chat-input {
+            padding: 12px;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            padding-bottom: 20px;
+            position: relative;
+        }
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 20px;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            flex-shrink: 0;
+            z-index: 1;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" onclick="UI.toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative;">
+                        <i class="ri-search-line" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                        <input type="text" placeholder="Search..." style="padding-left: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); height: 36px; width: 240px; outline: none;">
+                    </div>
+                </div>
+                <div class="navbar-center" style="font-weight: 600; font-size: 15px; letter-spacing: 0.5px;">Campus Issue Reporting System</div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <button class="notification-btn" onclick="UI.toggleNotifications(event)" title="Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notif-badge" class="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <div id="notif-dropdown" class="dropdown-menu" style="display: none;">
+                            <div id="notif-list" class="dropdown-list"></div>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" onclick="Theme.toggle()" title="Toggle Theme">
+                        <i class="ri-moon-line theme-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" onclick="UI.toggleProfileMenu(event)">
+                        <div class="avatar" id="userAvatar">U</div>
+                        <div id="profileMenu" class="dropdown-menu" style="display: none;">
+                            <a href="./profile.html" class="nav-link"><i class="ri-user-settings-line"></i> Profile Settings</a>
+                            <a href="./support.html" class="nav-link"><i class="ri-customer-service-2-line"></i> Support</a>
+                            <div class="dropdown-divider" style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+                            <a href="#" onclick="Auth.logout()" class="nav-link danger" style="color: var(--danger);"><i class="ri-logout-box-line"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 24px;">
+                <div style="font-size: 13px; opacity: 0.7; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                    <a href="./dashboard.html" style="color: var(--text); text-decoration: none;">Dashboard</a>
+                    <i class="ri-arrow-right-s-line"></i>
+                    <a href="./myissues.html" style="color: var(--text); text-decoration: none;">My Issues</a>
+                    <i class="ri-arrow-right-s-line"></i>
+                    <span style="font-weight: 500; color: var(--primary);">Issue Details</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                    <button class="btn btn-outline" onclick="history.back()" style="padding: 8px 12px;"><i class="ri-arrow-left-line"></i> Back</button>
+                    <h1 id="issueId" style="margin: 0; font-size: 20px; opacity: 0.5;">ISSUE #...</h1>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px;">
+                    <!-- Left Column: Details & Chat -->
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        <div class="card" style="padding: 24px; border-radius: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                                <h2 id="issueTitle" style="margin: 0; font-size: 24px; font-weight: 700;">Loading...</h2>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <span id="issueStatus" class="badge">Pending</span>
+                                    <button id="reopenBtn" class="btn btn-outline" style="display: none; padding: 4px 8px; font-size: 12px; border-color: var(--danger); color: var(--danger);" onclick="reopenIssue()">Reopen Issue</button>
+                                </div>
+                            </div>
+                            <p id="issueDesc" style="opacity: 0.8; line-height: 1.6; margin-bottom: 24px;">...</p>
+                            
+                            <div id="issueImageContainer" style="display: none; margin-bottom: 24px;">
+                                <img id="issueImage" src="" alt="Issue Image" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 12px; border: 1px solid var(--border);">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px; background: var(--bg); border-radius: 12px;">
+                                <div>
+                                    <div style="font-size: 12px; opacity: 0.5; text-transform: uppercase;">Category</div>
+                                    <div id="issueCategory" style="font-weight: 600;">-</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; opacity: 0.5; text-transform: uppercase;">Priority</div>
+                                    <div id="issuePriority" style="font-weight: 600;">-</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; opacity: 0.5; text-transform: uppercase;">Location</div>
+                                    <div id="issueLocation" style="font-weight: 600;">-</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; opacity: 0.5; text-transform: uppercase;">Assigned Staff</div>
+                                    <div id="issueStaff" style="font-weight: 600;">-</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; opacity: 0.5; text-transform: uppercase;">Created</div>
+                                    <div id="issueCreated" style="font-weight: 600; font-size: 13px;">-</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; opacity: 0.5; text-transform: uppercase;">Last Updated</div>
+                                    <div id="issueUpdated" style="font-weight: 600; font-size: 13px;">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat System -->
+                        <div class="card" style="padding: 24px; border-radius: 16px;">
+                            <h3 style="margin: 0 0 16px 0; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                                <i class="ri-chat-3-line"></i> Communication with Admin
+                            </h3>
+                            <div class="chat-container">
+                                <div id="chatMessages" class="chat-messages">
+                                    <!-- Messages will appear here -->
+                                </div>
+                                <div class="chat-input">
+                                    <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                                    <button class="btn btn-primary" onclick="sendMessage()" style="padding: 8px 16px;">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Timeline & Actions -->
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        <div class="card" style="padding: 24px; border-radius: 16px;">
+                            <h3 style="margin: 0 0 20px 0; font-size: 18px;">Issue Timeline</h3>
+                            <div id="issueTimeline">
+                                <!-- Timeline items -->
+                            </div>
+                        </div>
+
+                        <div id="ratingCard" class="card" style="padding: 24px; border-radius: 16px; display: none;">
+                            <h3 style="margin: 0 0 16px 0; font-size: 18px;">Rate Resolution</h3>
+                            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                                <i class="ri-star-line star-btn" onclick="setRating(1)" data-val="1" style="font-size: 24px; cursor: pointer; color: #f59e0b;"></i>
+                                <i class="ri-star-line star-btn" onclick="setRating(2)" data-val="2" style="font-size: 24px; cursor: pointer; color: #f59e0b;"></i>
+                                <i class="ri-star-line star-btn" onclick="setRating(3)" data-val="3" style="font-size: 24px; cursor: pointer; color: #f59e0b;"></i>
+                                <i class="ri-star-line star-btn" onclick="setRating(4)" data-val="4" style="font-size: 24px; cursor: pointer; color: #f59e0b;"></i>
+                                <i class="ri-star-line star-btn" onclick="setRating(5)" data-val="5" style="font-size: 24px; cursor: pointer; color: #f59e0b;"></i>
+                            </div>
+                            <textarea id="ratingComment" class="form-control" placeholder="Any feedback?" rows="2" style="margin-bottom: 12px;"></textarea>
+                            <button class="btn btn-primary w-full" onclick="submitRating()">Submit Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/issues.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script>
+        let currentRating = 0;
+        const urlParams = new URLSearchParams(window.location.search);
+        const issueId = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.checkAuth('student');
+            loadIssueDetails();
+            
+            // Auto-refresh chat every 5 seconds
+            setInterval(loadChat, 5000);
+        });
+
+        function loadIssueDetails() {
+            const issue = Issues.getById(issueId);
+            if (!issue) {
+                window.location.href = './dashboard.html';
+                return;
+            }
+
+            document.getElementById('issueId').innerText = `ISSUE #${issue.id}`;
+            document.getElementById('issueTitle').innerText = issue.title;
+            document.getElementById('issueDesc').innerText = issue.description;
+            document.getElementById('issueCategory').innerText = issue.category;
+            document.getElementById('issuePriority').innerText = issue.priority;
+            document.getElementById('issueLocation').innerText = issue.location || `${issue.block} - ${issue.room}`;
+            document.getElementById('issueStaff').innerText = issue.assignedStaff || 'Pending Assignment';
+            document.getElementById('issueCreated').innerText = new Date(issue.createdAt).toLocaleString();
+            document.getElementById('issueUpdated').innerText = issue.updatedAt ? new Date(issue.updatedAt).toLocaleString() : new Date(issue.createdAt).toLocaleString();
+            
+            const statusBadge = document.getElementById('issueStatus');
+            statusBadge.innerText = issue.status;
+            statusBadge.className = `badge badge-${issue.status.toLowerCase().replace(' ', '-')}`;
+
+            const reopenBtn = document.getElementById('reopenBtn');
+            if (issue.status === 'Resolved') {
+                reopenBtn.style.display = 'block';
+            } else {
+                reopenBtn.style.display = 'none';
+            }
+
+            if (issue.image) {
+                document.getElementById('issueImageContainer').style.display = 'block';
+                document.getElementById('issueImage').src = issue.image;
+            }
+
+            // Timeline
+            const timeline = document.getElementById('issueTimeline');
+            timeline.innerHTML = issue.timeline.reverse().map(t => `
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;">${t.action}</div>
+                        <div style="font-size: 12px; opacity: 0.6; margin-top: 2px;">${new Date(t.date).toLocaleString()}</div>
+                        <div style="font-size: 13px; margin-top: 4px;">${t.note}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Rating
+            if (issue.status === 'Resolved' && !issue.rating) {
+                document.getElementById('ratingCard').style.display = 'block';
+            } else if (issue.rating) {
+                document.getElementById('ratingCard').innerHTML = `
+                    <h3 style="margin: 0 0 12px 0; font-size: 18px;">Your Rating</h3>
+                    <div style="display: flex; gap: 4px; color: #f59e0b; margin-bottom: 8px;">
+                        ${Array(5).fill(0).map((_, i) => `<i class="ri-star-${i < issue.rating ? 'fill' : 'line'}"></i>`).join('')}
+                    </div>
+                    <p style="font-size: 14px; opacity: 0.8;">${issue.ratingComment || 'No comment provided.'}</p>
+                `;
+                document.getElementById('ratingCard').style.display = 'block';
+            }
+
+            loadChat();
+        }
+
+        function loadChat() {
+            const issue = Issues.getById(issueId);
+            if (!issue) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const chat = issue.chat || [];
+            
+            const html = chat.map(m => `
+                <div class="message ${m.role}">
+                    <div>${m.text}</div>
+                    <div class="message-info">
+                        <span>${m.role === 'admin' ? 'Admin' : 'You'}</span>
+                        <span>${new Date(m.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            if (chatMessages.innerHTML !== html) {
+                chatMessages.innerHTML = html;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const session = Auth.getSession();
+            Issues.addChatMessage(issueId, {
+                text,
+                senderId: session.userId,
+                senderName: session.name,
+                role: 'student'
+            });
+
+            input.value = '';
+            loadChat();
+        }
+
+        function setRating(val) {
+            currentRating = val;
+            const stars = document.querySelectorAll('.star-btn');
+            stars.forEach((s, i) => {
+                if (i < val) {
+                    s.classList.replace('ri-star-line', 'ri-star-fill');
+                } else {
+                    s.classList.replace('ri-star-fill', 'ri-star-line');
+                }
+            });
+        }
+
+        function submitRating() {
+            if (currentRating === 0) {
+                Notifications.showToast('Please select a rating', 'error');
+                return;
+            }
+            const comment = document.getElementById('ratingComment').value;
+            Issues.rate(issueId, currentRating, comment);
+            Notifications.showToast('Thank you for your feedback!', 'success');
+            loadIssueDetails();
+        }
+
+        function reopenIssue() {
+            if (confirm('Are you sure you want to reopen this issue?')) {
+                Issues.update(issueId, { status: 'In Progress' });
+                Issues.addComment(issueId, {
+                    action: 'Issue Reopened',
+                    note: 'Student reopened the issue.'
+                });
+                Notifications.showToast('Issue reopened successfully', 'success');
+                loadIssueDetails();
+            }
+        }
+    </script>
+</body>
+</html>

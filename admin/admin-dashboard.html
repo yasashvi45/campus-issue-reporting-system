@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/chatbot.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <!-- Sidebar will be injected by UI.renderSidebar() -->
+        </aside>
+
+        <main class="main-content">
+            <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" onclick="UI.toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative;">
+                        <i class="ri-search-line" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                        <input type="text" placeholder="Search..." style="padding-left: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); height: 36px; width: 240px; outline: none;">
+                    </div>
+                </div>
+                <div class="navbar-center">
+                    <div style="font-weight: 700; font-size: 16px; letter-spacing: 0.5px;">Campus Issue Reporting System</div>
+                </div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <button class="notification-btn" onclick="UI.toggleNotifications(event)" title="Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notif-badge" class="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <div id="notif-dropdown" class="dropdown-menu" style="display: none;">
+                            <div id="notif-list" class="dropdown-list">
+                                <!-- Notifications -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" onclick="Theme.toggle()" title="Toggle Theme">
+                        <i class="ri-moon-line theme-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" onclick="UI.toggleProfileMenu(event)">
+                        <div class="avatar" id="adminAvatar">AD</div>
+                        <div id="profileMenu" class="dropdown-menu" style="display: none;">
+                            <!-- Content injected by UI.updateUserInfo() -->
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="dashboard-container" style="padding: 16px; max-width: 1400px; margin: 0 auto;">
+                <!-- Premium Stats Cards -->
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%); border: 1px solid rgba(79, 70, 229, 0.2); position: relative; overflow: hidden;">
+                        <div style="position: relative; z-index: 1;">
+                            <h3 style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">Total Issues</h3>
+                            <div class="value" id="totalIssues" style="font-size: 32px; font-weight: 700;">0</div>
+                        </div>
+                        <i class="ri-file-list-3-line" style="position: absolute; right: 16px; bottom: 16px; font-size: 48px; opacity: 0.1;"></i>
+                    </div>
+                    <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%); border: 1px solid rgba(245, 158, 11, 0.2); position: relative; overflow: hidden;">
+                        <div style="position: relative; z-index: 1;">
+                            <h3 style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">Pending Issues</h3>
+                            <div class="value warning" id="pendingIssues" style="font-size: 32px; font-weight: 700; color: var(--warning);">0</div>
+                        </div>
+                        <i class="ri-time-line" style="position: absolute; right: 16px; bottom: 16px; font-size: 48px; opacity: 0.1;"></i>
+                    </div>
+                    <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%); border: 1px solid rgba(16, 185, 129, 0.2); position: relative; overflow: hidden;">
+                        <div style="position: relative; z-index: 1;">
+                            <h3 style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">Resolved Issues</h3>
+                            <div class="value success" id="resolvedIssues" style="font-size: 32px; font-weight: 700; color: var(--success);">0</div>
+                        </div>
+                        <i class="ri-checkbox-circle-line" style="position: absolute; right: 16px; bottom: 16px; font-size: 48px; opacity: 0.1;"></i>
+                    </div>
+                    <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%); border: 1px solid rgba(59, 130, 246, 0.2); position: relative; overflow: hidden;">
+                        <div style="position: relative; z-index: 1;">
+                            <h3 style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">Total Students</h3>
+                            <div class="value" id="totalStudents" style="font-size: 32px; font-weight: 700;">0</div>
+                        </div>
+                        <i class="ri-group-line" style="position: absolute; right: 16px; bottom: 16px; font-size: 48px; opacity: 0.1;"></i>
+                    </div>
+                    <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%); border: 1px solid rgba(16, 185, 129, 0.2); position: relative; overflow: hidden;">
+                        <div style="position: relative; z-index: 1;">
+                            <h3 style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">Active Users</h3>
+                            <div class="value" id="activeUsers" style="font-size: 32px; font-weight: 700; color: var(--success);">0</div>
+                        </div>
+                        <i class="ri-user-follow-line" style="position: absolute; right: 16px; bottom: 16px; font-size: 48px; opacity: 0.1;"></i>
+                    </div>
+                    <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(185, 28, 28, 0.1) 100%); border: 1px solid rgba(239, 68, 68, 0.2); position: relative; overflow: hidden;">
+                        <div style="position: relative; z-index: 1;">
+                            <h3 style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">Disabled Users</h3>
+                            <div class="value" id="disabledUsers" style="font-size: 32px; font-weight: 700; color: var(--danger);">0</div>
+                        </div>
+                        <i class="ri-user-forbid-line" style="position: absolute; right: 16px; bottom: 16px; font-size: 48px; opacity: 0.1;"></i>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Section -->
+                <div class="section-header" style="margin-bottom: 16px;">
+                    <h2 style="font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="ri-flashlight-line" style="color: var(--warning);"></i> Quick Actions
+                    </h2>
+                </div>
+                <div class="quick-actions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 32px;">
+                    <button class="btn btn-outline" onclick="UI.toggleAnnouncementModal()" style="padding: 16px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; height: auto; border: 1px solid var(--border); background: var(--card);">
+                        <i class="ri-megaphone-line" style="font-size: 24px; color: var(--primary);"></i>
+                        <span style="font-weight: 600;">Post Announcement</span>
+                    </button>
+                    <button class="btn btn-outline" onclick="Admin.exportToCSV()" style="padding: 16px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; height: auto; border: 1px solid var(--border); background: var(--card);">
+                        <i class="ri-file-chart-line" style="font-size: 24px; color: var(--success);"></i>
+                        <span style="font-weight: 600;">Export Report</span>
+                    </button>
+                </div>
+
+                <div class="dashboard-main-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 24px;">
+                    <!-- Recent Issues (Card-based for mobile) -->
+                    <div class="recent-issues-section">
+                        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h2 style="font-size: 18px; font-weight: 600;">Recent Issues</h2>
+                            <a href="./manage-issues.html" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500;">View All</a>
+                        </div>
+                        <div id="recentIssuesContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Issue cards will be injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Analytics & Announcements -->
+                    <div class="dashboard-sidebar" style="display: flex; flex-direction: column; gap: 24px;">
+                        <!-- AI Insights Card -->
+                        <div class="card" style="padding: 20px; border-radius: 16px; box-shadow: var(--shadow-l1); background: var(--card); border: 1px solid var(--border);">
+                            <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                                <i class="ri-magic-line" style="color: var(--primary);"></i> AI Smart Insights
+                            </h3>
+                            <div id="aiInsightsContainer">
+                                <!-- AI Insights will be injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Monthly Trends Chart -->
+                        <div class="card" style="padding: 20px; border-radius: 16px; box-shadow: var(--shadow-l1);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <h3 style="font-size: 15px; font-weight: 600;">Monthly Issue Trends</h3>
+                                <select id="chartFilter" class="form-control" style="width: auto; padding: 4px 8px; font-size: 11px; border-radius: 6px;">
+                                    <option value="30">Last 30 Days</option>
+                                    <option value="7">Last 7 Days</option>
+                                </select>
+                            </div>
+                            <div style="height: 200px;">
+                                <canvas id="monthlyChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Announcement System -->
+                        <div class="card" style="padding: 20px; border-radius: 16px; box-shadow: var(--shadow-l1);">
+                            <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                                <i class="ri-megaphone-line" style="color: var(--primary);"></i> Announcements
+                            </h3>
+                            <div id="announcementsList" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; max-height: 300px; overflow-y: auto;">
+                                <!-- Announcements -->
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <textarea id="quickAnnounceText" class="form-control" rows="2" placeholder="Type announcement..." style="padding: 12px; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); resize: none; font-size: 13px;"></textarea>
+                                <div style="display: flex; gap: 8px;">
+                                    <select id="quickAnnounceType" class="form-control" style="flex: 1; padding: 8px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-size: 13px;">
+                                        <option value="info">Info</option>
+                                        <option value="warning">Warning</option>
+                                        <option value="success">Success</option>
+                                    </select>
+                                    <button class="btn btn-primary" onclick="createQuickAnnouncement()" style="padding: 0 20px; border-radius: 8px; font-weight: 600;">Post</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Chatbot UI -->
+    <div class="chatbot-wrapper">
+        <div id="chatbotPanel" class="chatbot-panel">
+            <div class="chatbot-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="ri-robot-line" style="font-size: 20px;"></i>
+                    <span style="font-weight: 600;">Campus Assistant</span>
+                </div>
+                <button onclick="toggleChatbot()" style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;"><i class="ri-close-line"></i></button>
+            </div>
+            <div id="chatbotMessages" class="chatbot-messages">
+                <div class="chat-msg bot">
+                    Hello! I'm your AI assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Ask me anything..." onkeypress="if(event.key === 'Enter') sendChatbotMessage()">
+                <button onclick="sendChatbotMessage()"><i class="ri-send-plane-fill"></i></button>
+            </div>
+        </div>
+        <button class="chatbot-btn" onclick="toggleChatbot()">
+            <i class="ri-chat-smile-3-line"></i>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/ai-agent.js"></script>
+    <script src="../js/issues.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/charts.js"></script>
+    <script src="../js/announcements.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = Auth.checkAuth('admin');
+            if (session) {
+                Admin.loadDashboard();
+            }
+        });
+
+        function toggleChatbot() {
+            const panel = document.getElementById('chatbotPanel');
+            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function sendChatbotMessage() {
+            const input = document.getElementById('chatbotInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messages = document.getElementById('chatbotMessages');
+            messages.innerHTML += `<div class="chat-msg user">${text}</div>`;
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            setTimeout(() => {
+                const response = AIAgent.chatbot.getResponse(text);
+                messages.innerHTML += `<div class="chat-msg bot">${response}</div>`;
+                messages.scrollTop = messages.scrollHeight;
+            }, 600);
+        }
+
+        function createQuickAnnouncement() {
+            const text = document.getElementById('quickAnnounceText').value;
+            const type = document.getElementById('quickAnnounceType').value;
+            if (!text) return Notifications.showToast('Please enter text', 'warning');
+            
+            Announcements.create({ text, type });
+            Notifications.showToast('Announcement posted!', 'success');
+            document.getElementById('quickAnnounceText').value = '';
+        }
+    </script>
+</body>
+</html>

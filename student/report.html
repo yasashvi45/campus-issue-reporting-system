@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Issue - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link rel="stylesheet" href="../css/chatbot.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        .preview-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 16px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar same as dashboard -->
+        <aside class="sidebar">
+            <!-- Sidebar will be injected by UI.renderSidebar() -->
+        </aside>
+
+        <main class="main-content">
+            <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" onclick="UI.toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative;">
+                        <i class="ri-search-line" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                        <input type="text" placeholder="Search..." style="padding-left: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); height: 36px; width: 240px; outline: none;">
+                    </div>
+                </div>
+                <div class="navbar-center" style="font-weight: 600; font-size: 15px; letter-spacing: 0.5px;">Campus Issue Reporting System</div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <button class="notification-btn" onclick="UI.toggleNotifications(event)" title="Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notif-badge" class="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <div id="notif-dropdown" class="dropdown-menu" style="display: none;">
+                            <div id="notif-list" class="dropdown-list">
+                                <!-- Notifications -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" onclick="Theme.toggle()" title="Toggle Theme">
+                        <i class="ri-moon-line theme-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" onclick="UI.toggleProfileMenu(event)">
+                        <div class="avatar" id="userAvatar">JD</div>
+                        <div id="profileMenu" class="dropdown-menu" style="display: none;">
+                            <a href="./profile.html" class="nav-link"><i class="ri-user-settings-line"></i> Profile Settings</a>
+                            <a href="./support.html" class="nav-link"><i class="ri-customer-service-2-line"></i> Support</a>
+                            <div class="dropdown-divider" style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+                            <a href="#" onclick="Auth.logout()" class="nav-link danger" style="color: var(--danger);"><i class="ri-logout-box-line"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="card-header">
+                <h1>Report New Issue</h1>
+            </div>
+
+            <div style="background: var(--card); padding: 32px; border-radius: 12px; max-width: 800px; border: 1px solid var(--border); box-shadow: var(--shadow-l1);">
+                <form id="reportForm">
+                    <div class="form-group">
+                        <label style="font-weight: 500; margin-bottom: 8px; display: block;">Issue Title</label>
+                        <input type="text" id="title" class="form-control" required placeholder="e.g., Water leakage in Block A" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; justify-content: space-between; font-weight: 500; margin-bottom: 8px;">
+                            Description
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" class="btn" id="voiceBtn" onclick="toggleVoiceRecording()" style="padding: 4px 12px; font-size: 12px; border-radius: 8px; background: var(--card); color: var(--text); border: 1px solid var(--border); font-weight: 500; display: flex; align-items: center; gap: 4px;">
+                                    <i class="ri-mic-line"></i> Voice
+                                </button>
+                                <button type="button" class="btn" onclick="suggestAI()" style="padding: 4px 12px; font-size: 12px; border-radius: 8px; background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%); color: white; border: none; font-weight: 500; display: flex; align-items: center; gap: 4px;">
+                                    <i class="ri-magic-line"></i> AI Suggest
+                                </button>
+                            </div>
+                        </label>
+                        <textarea id="description" class="form-control" rows="5" required placeholder="Describe the issue in detail..." style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text);" oninput="handleAIUpdate()"></textarea>
+                        
+                        <!-- AI Suggestion Box -->
+                        <div id="aiSuggestionBox" style="display: none; margin-top: 12px; padding: 12px 16px; background: rgba(79, 70, 229, 0.1); border: 1px solid var(--primary); border-radius: 12px; animation: slideIn 0.3s ease;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: var(--primary); font-weight: 600; font-size: 13px; margin-bottom: 4px;">
+                                <i class="ri-magic-line"></i> AI Suggestion
+                            </div>
+                            <div id="aiSuggestionText" style="font-size: 13px; color: var(--text); line-height: 1.4;"></div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label style="font-weight: 500; margin-bottom: 8px; display: block;">Category</label>
+                            <select id="category" class="btn btn-outline" required style="width: 100%; text-align: left; padding: 12px 16px; border-radius: 12px;">
+                                <option value="Electrical">Electrical</option>
+                                <option value="Water">Water</option>
+                                <option value="Internet">Internet</option>
+                                <option value="AC">AC</option>
+                                <option value="Cleaning">Cleaning</option>
+                                <option value="Security">Security</option>
+                                <option value="Furniture">Furniture</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight: 500; margin-bottom: 8px; display: block;">Priority</label>
+                            <select id="priority" class="btn btn-outline" required style="width: 100%; text-align: left; padding: 12px 16px; border-radius: 12px;">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                                <option value="Emergency">Emergency</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label style="font-weight: 500; margin-bottom: 8px; display: block;">Campus Block</label>
+                            <select id="block" class="btn btn-outline" required style="width: 100%; text-align: left; padding: 12px 16px; border-radius: 12px;">
+                                <option value="" disabled selected>Select Campus Block</option>
+                                <option value="Main Block">Main Block</option>
+                                <option value="Canteen">Canteen</option>
+                                <option value="ECE Block">ECE Block</option>
+                                <option value="AI / AI & ML / DS Block">AI / AI & ML / DS Block</option>
+                                <option value="Mechanical & Civil Block">Mechanical & Civil Block</option>
+                                <option value="Library">Library</option>
+                                <option value="Boys Hostel">Boys Hostel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight: 500; margin-bottom: 8px; display: block;">Room / Area</label>
+                            <input type="text" id="room" class="form-control" required placeholder="e.g., Room 302, Ground Floor" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-weight: 500; margin-bottom: 8px; display: block;">Upload Image</label>
+                        <div class="drop-zone" id="dropZone" style="background: var(--card); border: 2px dashed var(--border); border-radius: 16px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="ri-upload-cloud-2-line" style="font-size: 32px; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+                            <p style="margin: 0; font-size: 14px; opacity: 0.7;">Drag & drop image or click to upload</p>
+                            <input type="file" id="fileInput" hidden accept="image/*">
+                        </div>
+                        <img id="preview" class="preview-img" style="cursor: pointer; max-width: 100%; max-height: 200px; border-radius: 12px; margin-top: 16px; display: none; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" onclick="openImageModal()">
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px;">
+                        <button type="button" class="btn btn-outline" onclick="window.location.href='./dashboard.html'" style="padding: 12px 24px; border-radius: 12px; font-weight: 500;">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="padding: 12px 24px; border-radius: 12px; font-weight: 500;">Submit Report</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center;" onclick="closeImageModal()">
+        <img id="modalImage" style="max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+        <button class="icon-btn" style="position: absolute; top: 20px; right: 20px; color: white; background: rgba(255,255,255,0.2);" onclick="closeImageModal()"><i class="ri-close-line"></i></button>
+    </div>
+
+    <!-- Duplicate Warning Modal -->
+    <div id="duplicateModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 60px; height: 60px; background: rgba(245, 158, 11, 0.1); color: var(--warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px;">
+                    <i class="ri-error-warning-line"></i>
+                </div>
+                <h2 style="margin: 0; font-size: 20px;">⚠️ Similar issue already reported</h2>
+                <p style="opacity: 0.7; margin-top: 8px;">We found some issues that look similar to yours. Please check if your problem is already being addressed.</p>
+            </div>
+            
+            <div id="similarIssuesList" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; max-height: 300px; overflow-y: auto; padding-right: 8px;">
+                <!-- Similar issues will be injected here -->
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeDuplicateModal()">Cancel Submission</button>
+                <button class="btn btn-primary" style="flex: 1;" onclick="submitReport(true)">Continue Anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot UI -->
+    <div class="chatbot-wrapper">
+        <div id="chatbotPanel" class="chatbot-panel">
+            <div class="chatbot-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="ri-robot-line" style="font-size: 20px;"></i>
+                    <span style="font-weight: 600;">Campus Assistant</span>
+                </div>
+                <button onclick="toggleChatbot()" style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;"><i class="ri-close-line"></i></button>
+            </div>
+            <div id="chatbotMessages" class="chatbot-messages">
+                <div class="chat-msg bot">
+                    Hello! I'm your AI assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Ask me anything..." onkeypress="if(event.key === 'Enter') sendChatbotMessage()">
+                <button onclick="sendChatbotMessage()"><i class="ri-send-plane-fill"></i></button>
+            </div>
+        </div>
+        <button class="chatbot-btn" onclick="toggleChatbot()">
+            <i class="ri-chat-smile-3-line"></i>
+        </button>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/ai-agent.js"></script>
+    <script src="../js/issues.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.checkAuth();
+        });
+
+        const titleInput = document.getElementById('title');
+        const descInput = document.getElementById('description');
+        const categorySelect = document.getElementById('category');
+        const prioritySelect = document.getElementById('priority');
+        const suggestionBox = document.getElementById('aiSuggestionBox');
+        const suggestionText = document.getElementById('aiSuggestionText');
+        
+        function handleAIUpdate() {
+            const title = titleInput.value;
+            const desc = descInput.value;
+            
+            if (desc.length > 5) {
+                const analysis = AIAgent.analyzeIssue(title, desc);
+                if (analysis.category !== 'Other') {
+                    categorySelect.value = analysis.category;
+                }
+                prioritySelect.value = analysis.priority;
+
+                const suggestion = AIAgent.getSuggestion(desc);
+                if (suggestion && suggestion !== "Please provide more details for a specific suggestion.") {
+                    suggestionText.innerText = `Possible solution: ${suggestion}`;
+                    suggestionBox.style.display = 'block';
+                } else {
+                    suggestionBox.style.display = 'none';
+                }
+            } else {
+                suggestionBox.style.display = 'none';
+            }
+        }
+
+        titleInput.onblur = handleAIUpdate;
+
+        function toggleChatbot() {
+            const panel = document.getElementById('chatbotPanel');
+            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function sendChatbotMessage() {
+            const input = document.getElementById('chatbotInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messages = document.getElementById('chatbotMessages');
+            
+            // User message
+            messages.innerHTML += `<div class="chat-msg user">${text}</div>`;
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            // Bot response
+            setTimeout(() => {
+                const response = AIAgent.chatbot.getResponse(text);
+                messages.innerHTML += `<div class="chat-msg bot">${response}</div>`;
+                messages.scrollTop = messages.scrollHeight;
+            }, 600);
+        }
+
+        function closeDuplicateModal() {
+            document.getElementById('duplicateModal').style.display = 'none';
+        }
+
+        function openImageModal() {
+            const preview = document.getElementById('preview');
+            if (preview.src) {
+                document.getElementById('modalImage').src = preview.src;
+                document.getElementById('imageModal').style.display = 'flex';
+            }
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        let isRecording = false;
+        let recognition = null;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                const descInput = document.getElementById('description');
+                if (finalTranscript) {
+                    descInput.value += (descInput.value ? ' ' : '') + finalTranscript;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error', event.error);
+                Notifications.showToast('Voice recognition error: ' + event.error, 'error');
+                stopRecording();
+            };
+
+            recognition.onend = () => {
+                if (isRecording) {
+                    recognition.start(); // Keep listening if not explicitly stopped
+                }
+            };
+        }
+
+        function toggleVoiceRecording() {
+            const voiceBtn = document.getElementById('voiceBtn');
+            if (!recognition) {
+                Notifications.showToast('Voice recognition is not supported in this browser.', 'error');
+                return;
+            }
+
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        function startRecording() {
+            isRecording = true;
+            const voiceBtn = document.getElementById('voiceBtn');
+            voiceBtn.innerHTML = '<i class="ri-mic-fill" style="color: var(--danger);"></i> Recording...';
+            voiceBtn.style.borderColor = 'var(--danger)';
+            voiceBtn.style.color = 'var(--danger)';
+            recognition.start();
+            Notifications.showToast('Voice recording started', 'info');
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            const voiceBtn = document.getElementById('voiceBtn');
+            voiceBtn.innerHTML = '<i class="ri-mic-line"></i> Voice';
+            voiceBtn.style.borderColor = 'var(--border)';
+            voiceBtn.style.color = 'var(--text)';
+            recognition.stop();
+            Notifications.showToast('Voice recording stopped', 'info');
+        }
+
+        function suggestAI() {
+            const title = document.getElementById('title').value;
+            const desc = document.getElementById('description').value;
+            if (!desc && !title) {
+                Notifications.showToast('Please enter some details first', 'info');
+                return;
+            }
+
+            Notifications.showToast('AI is analyzing...', 'info');
+            
+            setTimeout(() => {
+                const analysis = AIAgent.analyzeIssue(title, desc);
+                document.getElementById('category').value = analysis.category;
+                document.getElementById('priority').value = analysis.priority;
+                Notifications.showToast(`AI suggested: ${analysis.category} (${analysis.priority})`, 'success');
+            }, 800);
+        }
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        let imageData = null;
+
+        dropZone.onclick = () => fileInput.click();
+
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); };
+        dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFile(e.dataTransfer.files[0]);
+        };
+
+        function handleFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imageData = e.target.result;
+                    preview.src = imageData;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('reportForm').onsubmit = (e) => {
+            e.preventDefault();
+            submitReport(false);
+        };
+
+        function submitReport(force = false) {
+            const titleInput = document.getElementById('title');
+            const description = document.getElementById('description').value;
+            const block = document.getElementById('block').value;
+            const room = document.getElementById('room').value;
+            const location = `${block} - ${room}`;
+
+            let title = titleInput.value.trim();
+            
+            // Auto Title Generation if title is empty
+            if (!title && window.AIAgent) {
+                title = AIAgent.generateTitle(description);
+                titleInput.value = title;
+            }
+
+            if (!title || !description || !block || !room) {
+                Notifications.showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Duplicate Detection
+            if (!force && window.AIAgent) {
+                const similar = AIAgent.findSimilarIssues(title, description, location);
+                if (similar.length > 0) {
+                    const list = document.getElementById('similarIssuesList');
+                    list.innerHTML = similar.map(i => `
+                        <div style="background: var(--bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="font-weight: 600; font-size: 14px; color: var(--text);">${i.title}</div>
+                                <span class="badge badge-${i.status.toLowerCase().replace(' ', '-')}" style="font-size: 10px;">${i.status}</span>
+                            </div>
+                            <div style="font-size: 12px; opacity: 0.7; margin-top: 6px; line-height: 1.4;">${i.description.substring(0, 120)}...</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border);">
+                                <div style="font-size: 11px; opacity: 0.5;"><i class="ri-calendar-line"></i> ${new Date(i.date).toLocaleDateString()}</div>
+                                <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="UI.showIssueDetails('${i.id}')">View Existing</button>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('duplicateModal').style.display = 'flex';
+                    return;
+                }
+            }
+
+            const session = Auth.checkAuth();
+            const issueData = {
+                studentId: session.userId,
+                studentName: session.name,
+                title: title,
+                description: description,
+                category: document.getElementById('category').value,
+                priority: document.getElementById('priority').value,
+                block: block,
+                room: room,
+                image: imageData
+            };
+
+            try {
+                Issues.create(issueData, force);
+                Notifications.showToast('Issue reported successfully!', 'success');
+                setTimeout(() => window.location.href = './myissues.html', 1500);
+            } catch (err) {
+                Notifications.showToast(err.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

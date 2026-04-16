@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Register - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container" style="background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;">
+        <div class="auth-card" style="background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 40px; border-radius: 16px; box-shadow: var(--shadow-l3); width: 100%; max-width: 450px;">
+            <div class="auth-header" style="text-align: center; margin-bottom: 32px;">
+                <h1 class="auth-title" style="color: var(--text); margin-bottom: 8px; font-size: 24px;">Campus Issue Reporting System</h1>
+                <h2 style="color: var(--text); margin-bottom: 8px; font-size: 18px; font-weight: 500;">Admin Registration</h2>
+                <p style="color: var(--text); opacity: 0.7;">Create a new administrator account</p>
+            </div>
+            <form id="adminRegisterForm">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="color: var(--text); display: block; margin-bottom: 8px; font-weight: 500;">College Name</label>
+                    <input type="text" id="collegeName" required placeholder="Enter College Name" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); width: 100%; padding: 12px 16px; border-radius: 8px; outline: none;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="color: var(--text); display: block; margin-bottom: 8px; font-weight: 500;">Full Name</label>
+                    <input type="text" id="name" required placeholder="Jane Doe" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); width: 100%; padding: 12px 16px; border-radius: 8px; outline: none;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="color: var(--text); display: block; margin-bottom: 8px; font-weight: 500;">Admin ID</label>
+                    <input type="text" id="adminId" required placeholder="ADM-12345" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); width: 100%; padding: 12px 16px; border-radius: 8px; outline: none;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="color: var(--text); display: block; margin-bottom: 8px; font-weight: 500;">Admin Email</label>
+                    <input type="email" id="email" required placeholder="admin@campus.edu" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); width: 100%; padding: 12px 16px; border-radius: 8px; outline: none;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="color: var(--text); display: block; margin-bottom: 8px; font-weight: 500;">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" required placeholder="••••••••" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); width: 100%; padding: 12px 16px; border-radius: 8px; outline: none; padding-right: 60px;">
+                        <button type="button" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary); cursor: pointer; font-size: 13px; font-weight: 600;">
+                            Show
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="color: var(--text); display: block; margin-bottom: 8px; font-weight: 500;">Confirm Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="confirmPassword" required placeholder="••••••••" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); width: 100%; padding: 12px 16px; border-radius: 8px; outline: none; padding-right: 60px;">
+                        <button type="button" id="toggleConfirmPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary); cursor: pointer; font-size: 13px; font-weight: 600;">
+                            Show
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label style="color: var(--text); display: block; margin-bottom: 8px; font-weight: 500;">Security Code</label>
+                    <div style="position: relative;">
+                        <input type="password" id="adminCode" required placeholder="Enter admin security code" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); width: 100%; padding: 12px 16px; border-radius: 8px; outline: none; padding-right: 40px;">
+                        <i class="ri-eye-off-line" id="toggleCode" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text); opacity: 0.5; cursor: pointer;" onclick="toggleVisibility('adminCode', 'toggleCode')"></i>
+                    </div>
+                    <div id="adminCodeError" style="color: var(--danger); font-size: 12px; margin-top: 4px; display: none;">Invalid Admin Code</div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; border-radius: 8px; font-weight: 600;">Register Admin</button>
+            </form>
+            <div class="auth-footer" style="text-align: center; margin-top: 32px;">
+                <p style="color: var(--text); opacity: 0.7;">Already an admin? <a href="./admin-login.html" style="color: var(--primary); font-weight: 600;">Login here</a></p>
+                <p style="margin-top: 12px;"><a href="../register.html" style="color: var(--text); opacity: 0.5; font-size: 14px;">Student Portal</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const existingCollege = localStorage.getItem('collegeName');
+            if (existingCollege && existingCollege !== 'Campus Issue Reporting System') {
+                const collegeInput = document.getElementById('collegeName');
+                collegeInput.value = existingCollege;
+                collegeInput.readOnly = true;
+                collegeInput.style.opacity = '0.7';
+                collegeInput.style.cursor = 'not-allowed';
+            }
+        });
+
+        function toggleVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('ri-eye-off-line');
+                icon.classList.add('ri-eye-line');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('ri-eye-line');
+                icon.classList.add('ri-eye-off-line');
+            }
+        }
+
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = 'Show';
+            }
+        });
+
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('confirmPassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = 'Show';
+            }
+        });
+
+        document.getElementById('adminRegisterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const adminCodeInput = document.getElementById('adminCode');
+            const adminCodeError = document.getElementById('adminCodeError');
+            
+            // Reset error state
+            adminCodeInput.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            adminCodeError.style.display = 'none';
+
+            if (password !== confirmPassword) {
+                Notifications.showToast('Passwords do not match', 'danger');
+                return;
+            }
+
+            const adminCodeValue = adminCodeInput.value.trim();
+
+            if (adminCodeValue !== AdminAuth.ADMIN_CODE) {
+                adminCodeInput.style.borderColor = '#ef4444';
+                adminCodeError.style.display = 'block';
+                return;
+            }
+
+            const adminData = {
+                collegeName: document.getElementById('collegeName').value,
+                name: document.getElementById('name').value,
+                adminId: document.getElementById('adminId').value,
+                email: document.getElementById('email').value,
+                password: password,
+                adminCode: adminCodeValue
+            };
+
+            try {
+                AdminAuth.register(adminData);
+                Notifications.showToast('Admin registration successful!', 'success');
+                setTimeout(() => {
+                    window.location.href = './admin-login.html';
+                }, 1500);
+            } catch (error) {
+                if (error.message === 'Invalid Admin Code') {
+                    adminCodeInput.style.borderColor = '#ef4444';
+                    adminCodeError.style.display = 'block';
+                } else {
+                    Notifications.showToast(error.message, 'danger');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

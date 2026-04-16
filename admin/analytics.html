@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <!-- Sidebar will be injected by UI.renderSidebar() -->
+        </aside>
+
+        <main class="main-content">
+            <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" onclick="UI.toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative;">
+                        <i class="ri-search-line" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                        <input type="text" placeholder="Search..." style="padding-left: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); height: 36px; width: 240px; outline: none;">
+                    </div>
+                </div>
+                <div class="navbar-center" style="font-weight: 600; font-size: 15px; letter-spacing: 0.5px;">Campus Issue Reporting System</div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <button class="notification-btn" onclick="UI.toggleNotifications(event)" title="Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notif-badge" class="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <div id="notif-dropdown" class="dropdown-menu" style="display: none;">
+                            <div id="notif-list" class="dropdown-list">
+                                <!-- Notifications -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" onclick="Theme.toggle()" title="Toggle Theme">
+                        <i class="ri-moon-line theme-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" onclick="UI.toggleProfileMenu(event)">
+                        <div class="avatar" id="adminAvatar">AD</div>
+                        <div id="profileMenu" class="dropdown-menu" style="display: none;">
+                            <a href="./profile.html" class="nav-link"><i class="ri-user-settings-line"></i> Profile Settings</a>
+                            <a href="../student/support.html" class="nav-link"><i class="ri-customer-service-2-line"></i> Support</a>
+                            <div class="dropdown-divider" style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+                            <a href="#" onclick="Auth.logout()" class="nav-link danger" style="color: var(--danger);"><i class="ri-logout-box-line"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h1 style="margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.5px;">Campus Analytics</h1>
+                <button class="btn btn-primary" onclick="window.print()" style="padding: 10px 20px; border-radius: 12px; font-weight: 500; display: flex; align-items: center; gap: 8px;"><i class="ri-printer-line"></i> Print Report</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Resolution Rate</h3>
+                        <div class="stat-icon icon-success" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                            <i class="ri-percent-line" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="value" id="resRate" style="font-size: 36px; font-weight: 700; letter-spacing: -1px; color: var(--success);">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Avg. Resolution Time</h3>
+                        <div class="stat-icon icon-primary" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                            <i class="ri-timer-line" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="value" id="avgResTime" style="font-size: 36px; font-weight: 700; letter-spacing: -1px; color: var(--text);">0h</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Active Reports</h3>
+                        <div class="stat-icon icon-warning" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                            <i class="ri-file-list-3-line" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="value" id="activeReports" style="font-size: 36px; font-weight: 700; letter-spacing: -1px; color: var(--warning);">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;">Top Problem Area</h3>
+                        <div class="stat-icon icon-danger" style="width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(239, 68, 68, 0.1); color: var(--danger);">
+                            <i class="ri-error-warning-line" style="font-size: 20px;"></i>
+                        </div>
+                    </div>
+                    <div class="value" id="topProblemArea" style="font-size: 24px; font-weight: 600; letter-spacing: -0.5px; color: var(--danger);">-</div>
+                </div>
+            </div>
+
+            <div class="dashboard-bottom">
+                <div class="table-container">
+                    <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">Issues by Status</h2>
+                    <div style="height: 300px; margin-top: 20px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">Monthly Reports</h2>
+                        <select id="trendFilter" class="btn btn-outline" onchange="window.loadAnalytics()" style="padding: 6px 10px; border-radius: 8px; font-size: 12px; background: var(--card); border: 1px solid var(--border); color: var(--text); cursor: pointer; outline: none;">
+                            <option value="all">All Time</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="7">Last 7 Days</option>
+                        </select>
+                    </div>
+                    <div style="height: 300px;">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-bottom">
+                <div class="table-container" style="grid-column: 1 / -1;">
+                    <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">Category Breakdown</h2>
+                    <div id="categoryBreakdown" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 20px;">
+                        <!-- Category cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-bottom">
+                <div class="table-container" style="grid-column: 1 / -1;">
+                    <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.3px;">Issue Distribution by Block</h2>
+                    <div id="blockBreakdown" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 20px;">
+                        <!-- Block cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/ai-agent.js"></script>
+    <script src="../js/issues.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/charts.js"></script>
+    <script>
+        window.loadAnalytics = function() {
+            let issues = Issues.getAll();
+            const filter = document.getElementById('trendFilter')?.value || 'all';
+            
+            if (filter !== 'all') {
+                const days = parseInt(filter);
+                const cutoff = new Date();
+                cutoff.setDate(cutoff.getDate() - days);
+                issues = issues.filter(i => new Date(i.date) >= cutoff);
+            }
+            
+            // Stats
+            const resolved = issues.filter(i => i.status === 'Resolved').length;
+            const rate = issues.length ? Math.round((resolved / issues.length) * 100) : 0;
+            document.getElementById('resRate').innerText = rate + '%';
+            document.getElementById('activeReports').innerText = issues.filter(i => i.status !== 'Resolved' && i.status !== 'Closed').length;
+
+            // Average Resolution Time
+            const resolvedIssues = issues.filter(i => i.status === 'Resolved' && i.resolvedAt && i.createdAt);
+            if (resolvedIssues.length > 0) {
+                const totalDiffMs = resolvedIssues.reduce((acc, i) => {
+                    const created = new Date(i.createdAt);
+                    const resolved = new Date(i.resolvedAt);
+                    if (!isNaN(created.getTime()) && !isNaN(resolved.getTime())) {
+                        return acc + (resolved - created);
+                    }
+                    return acc;
+                }, 0);
+                const avgDiffMs = totalDiffMs / resolvedIssues.length;
+                const avgDiffHrs = (avgDiffMs / (1000 * 60 * 60)).toFixed(1);
+                document.getElementById('avgResTime').innerText = avgDiffHrs + 'h';
+            } else {
+                document.getElementById('avgResTime').innerText = '0h';
+            }
+
+            // Charts
+            const categories = issues.reduce((acc, i) => { acc[i.category] = (acc[i.category] || 0) + 1; return acc; }, {});
+
+            // Top Problem Area
+            const sortedCategories = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+            const breakdown = document.getElementById('categoryBreakdown');
+            
+            if (sortedCategories.length > 0) {
+                document.getElementById('topProblemArea').innerText = sortedCategories[0][0];
+                
+                breakdown.innerHTML = sortedCategories.map(([cat, count]) => `
+                    <div style="padding: 16px; border-radius: 16px; background: rgba(79, 70, 229, 0.05); border: 1px solid rgba(79, 70, 229, 0.1); text-align: center; transition: var(--transition);" onmouseover="this.style.background='rgba(79, 70, 229, 0.1)'" onmouseout="this.style.background='rgba(79, 70, 229, 0.05)'">
+                        <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.6; margin-bottom: 8px;">${cat}</div>
+                        <div style="font-size: 20px; font-weight: 700; color: var(--primary);">${count}</div>
+                    </div>
+                `).join('');
+            } else {
+                breakdown.innerHTML = `<div style="grid-column: 1 / -1;">${UI.getEmptyState("No data available", "Category breakdown will appear here")}</div>`;
+            }
+
+            const statuses = issues.reduce((acc, i) => { acc[i.status] = (acc[i.status] || 0) + 1; return acc; }, {});
+            Charts.renderStatusChart('statusChart', statuses);
+
+            const monthlyData = issues.reduce((acc, i) => {
+                const date = new Date(i.date);
+                if (!isNaN(date.getTime())) {
+                    const month = date.toLocaleString('default', { month: 'short' });
+                    acc[month] = (acc[month] || 0) + 1;
+                }
+                return acc;
+            }, {});
+            Charts.renderLineChart('monthlyChart', monthlyData, 'Issues');
+            
+            // Block Distribution
+            const blockCounts = issues.reduce((acc, i) => {
+                if (i.block) {
+                    acc[i.block] = (acc[i.block] || 0) + 1;
+                }
+                return acc;
+            }, {});
+            
+            const blockBreakdown = document.getElementById('blockBreakdown');
+            if (blockBreakdown) {
+                const sortedBlocks = Object.entries(blockCounts).sort((a, b) => b[1] - a[1]);
+                if (sortedBlocks.length > 0) {
+                    blockBreakdown.innerHTML = sortedBlocks.map(([block, count]) => `
+                        <div style="padding: 16px; border-radius: 16px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); text-align: center; transition: var(--transition);" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.05)'">
+                            <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.6; margin-bottom: 8px;">${block}</div>
+                            <div style="font-size: 20px; font-weight: 700; color: var(--success);">${count}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    blockBreakdown.innerHTML = `<div style="grid-column: 1 / -1;">${UI.getEmptyState("No data available", "Block distribution will appear here")}</div>`;
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.checkAuth('admin');
+            UI.renderSidebar();
+            window.loadAnalytics();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Issue Reporting System - Redirecting...</title>
+    <style>
+        body {
+            background: #0F172A;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <script src="./js/auth.js"></script>
+    <script>
+        (function() {
+            const redirect = () => {
+                try {
+                    if (typeof Auth !== 'undefined') {
+                        const session = Auth.getSession();
+                        if (!session) {
+                            window.location.replace('./login.html');
+                        } else {
+                            const target = session.role === 'admin' ? './admin/admin-dashboard.html' : './student/dashboard.html';
+                            window.location.replace(target);
+                        }
+                    } else {
+                        window.location.replace('./login.html');
+                    }
+                } catch (error) {
+                    console.error('Redirection error:', error);
+                    window.location.replace('./login.html');
+                }
+            };
+
+            // Execute immediately if script is already loaded, or wait for load
+            if (document.readyState === 'complete') {
+                redirect();
+            } else {
+                window.addEventListener('load', redirect);
+            }
+
+            // Safety timeout to prevent infinite loading if something fails
+            setTimeout(redirect, 1500);
+        })();
+    </script>
+</body>
+</html>

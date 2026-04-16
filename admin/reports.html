@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="ri-government-line"></i>
+                    <span>ABC Campus</span>
+                </div>
+                <button class="icon-btn" onclick="UI.toggleSidebar()" style="font-size: 18px;">
+                    <i class="ri-menu-fold-line"></i>
+                </button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="./admin-dashboard.html" class="nav-link ">
+                        <i class="ri-dashboard-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./manage-issues.html" class="nav-link ">
+                        <i class="ri-list-settings-line"></i>
+                        <span>Manage Issues</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./students.html" class="nav-link ">
+                        <i class="ri-group-line"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./analytics.html" class="nav-link ">
+                        <i class="ri-bar-chart-box-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./reports.html" class="nav-link active">
+                        <i class="ri-file-chart-line"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="./announcements.html" class="nav-link ">
+                        <i class="ri-megaphone-line"></i>
+                        <span>Announcements</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+                        <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" onclick="UI.toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative;">
+                        <i class="ri-search-line" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                        <input type="text" placeholder="Search..." style="padding-left: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); height: 36px; width: 240px; outline: none;">
+                    </div>
+                </div>
+                <div class="navbar-center" style="font-weight: 600; font-size: 15px; letter-spacing: 0.5px;">Campus Issue Reporting System</div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <button class="notification-btn" onclick="UI.toggleNotifications(event)" title="Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notif-badge" class="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <div id="notif-dropdown" class="dropdown-menu" style="display: none;">
+                            <div id="notif-list" class="dropdown-list">
+                                <!-- Notifications -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" onclick="Theme.toggle()" title="Toggle Theme">
+                        <i class="ri-moon-line theme-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" onclick="UI.toggleProfileMenu(event)">
+                        <div class="avatar" id="adminAvatar">AD</div>
+                        <div id="profileMenu" class="dropdown-menu" style="display: none;">
+                            <a href="./profile.html" class="nav-link"><i class="ri-user-settings-line"></i> Profile Settings</a>
+                            <a href="../student/support.html" class="nav-link"><i class="ri-customer-service-2-line"></i> Support</a>
+                            <div class="dropdown-divider" style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+                            <a href="#" onclick="Auth.logout()" class="nav-link danger" style="color: var(--danger);"><i class="ri-logout-box-line"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h1 style="margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.5px;">Reports & Export</h1>
+            </div>
+
+            <div style="background: var(--card); padding: 32px; border-radius: 12px; max-width: 800px; border: 1px solid var(--border); box-shadow: var(--shadow-l1);">
+                <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Export Issues Data</h2>
+                <p style="opacity: 0.8; margin-top: 8px; margin-bottom: 24px; font-size: 14px;">Download a CSV file containing all reported issues for external analysis.</p>
+                
+                <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 32px; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px; margin: 0;">
+                        <label style="margin-bottom: 8px; display: block; font-size: 13px; font-weight: 600; opacity: 0.7;">Status Filter</label>
+                        <select id="exportStatus" class="form-control" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 14px; transition: all 0.2s ease; outline: none; appearance: none; cursor: pointer;">
+                            <option value="all">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 200px; margin: 0;">
+                        <label style="margin-bottom: 8px; display: block; font-size: 13px; font-weight: 600; opacity: 0.7;">Category Filter</label>
+                        <select id="exportCategory" class="form-control" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 14px; transition: all 0.2s ease; outline: none; appearance: none; cursor: pointer;">
+                            <option value="all">All Categories</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Water">Water</option>
+                            <option value="Internet">Internet</option>
+                            <option value="AC">AC</option>
+                            <option value="Cleaning">Cleaning</option>
+                            <option value="Security">Security</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="exportIssuesCSV()" style="padding: 10px 24px; border-radius: 12px; font-weight: 500; display: flex; align-items: center; gap: 8px;"><i class="ri-download-2-line"></i> Export to CSV</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/ai-agent.js"></script>
+    <script src="../js/issues.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = Auth.checkAuth('admin');
+        });
+
+        function exportIssuesCSV() {
+            const statusFilter = document.getElementById('exportStatus').value;
+            const categoryFilter = document.getElementById('exportCategory').value;
+            
+            let issues = Issues.getAll();
+            
+            if (statusFilter !== 'all') {
+                issues = issues.filter(i => i.status === statusFilter);
+            }
+            if (categoryFilter !== 'all') {
+                issues = issues.filter(i => i.category === categoryFilter);
+            }
+
+            if (issues.length === 0) {
+                Notifications.showToast('No issues found to export.', 'warning');
+                return;
+            }
+
+            // Create CSV content
+            const headers = ['ID', 'Title', 'Description', 'Category', 'Priority', 'Status', 'Block', 'Room', 'Date Reported', 'Resolution Time (hrs)', 'Rating', 'Reported By (User ID)'];
+            const csvRows = [];
+            csvRows.push(headers.join(','));
+
+            issues.forEach(issue => {
+                let resTime = 'N/A';
+                if (issue.status === 'Resolved' && issue.resolvedAt && issue.createdAt) {
+                    const created = new Date(issue.createdAt);
+                    const resolved = new Date(issue.resolvedAt);
+                    if (!isNaN(created.getTime()) && !isNaN(resolved.getTime())) {
+                        resTime = ((resolved - created) / (1000 * 60 * 60)).toFixed(2);
+                    }
+                }
+
+                const row = [
+                    issue.id,
+                    `"${issue.title.replace(/"/g, '""')}"`,
+                    `"${issue.description.replace(/"/g, '""')}"`,
+                    issue.category,
+                    issue.priority,
+                    issue.status,
+                    `"${issue.block || ''}"`,
+                    `"${issue.room || ''}"`,
+                    (() => {
+                        const date = new Date(issue.date);
+                        return !isNaN(date.getTime()) ? date.toISOString() : 'N/A';
+                    })(),
+                    resTime,
+                    issue.rating || 'N/A',
+                    issue.user
+                ];
+                csvRows.push(row.join(','));
+            });
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            const now = new Date();
+            const dateSuffix = !isNaN(now.getTime()) ? now.toISOString().split('T')[0] : 'export';
+            link.setAttribute('download', `smart_campus_issues_${dateSuffix}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            Notifications.showToast('Export successful!', 'success');
+        }
+    </script>
+</body>
+</html>

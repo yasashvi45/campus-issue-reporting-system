@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Campus Issue Reporting System</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/chatbot.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <!-- Sidebar will be injected by UI.renderSidebar() -->
+        </aside>
+
+        <main class="main-content">
+            <nav class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" onclick="UI.toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative;">
+                        <i class="ri-search-line" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;"></i>
+                        <input type="text" placeholder="Search..." style="padding-left: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); height: 36px; width: 240px; outline: none;">
+                    </div>
+                </div>
+                <div class="navbar-center">
+                    <div style="font-weight: 700; font-size: 16px; letter-spacing: 0.5px;">Campus Issue Reporting System</div>
+                </div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <button class="notification-btn" onclick="UI.toggleNotifications(event)" title="Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notif-badge" class="notification-badge" style="display: none;">0</span>
+                        </button>
+                        <div id="notif-dropdown" class="dropdown-menu" style="display: none;">
+                            <div id="notif-list" class="dropdown-list">
+                                <!-- Notifications -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="toggle-btn" onclick="Theme.toggle()" title="Toggle Theme">
+                        <i class="ri-moon-line theme-icon"></i>
+                    </button>
+                    <div class="profile-dropdown" onclick="UI.toggleProfileMenu(event)">
+                        <div class="avatar" id="userAvatar">JD</div>
+                        <div id="profileMenu" class="dropdown-menu" style="display: none;">
+                            <a href="./profile.html" class="nav-link"><i class="ri-user-settings-line"></i> Profile Settings</a>
+                            <a href="./support.html" class="nav-link"><i class="ri-customer-service-2-line"></i> Support</a>
+                            <div class="dropdown-divider" style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+                            <a href="#" onclick="Auth.logout()" class="nav-link danger" style="color: var(--danger);"><i class="ri-logout-box-line"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="stats-grid">
+                <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%); border: 1px solid rgba(79, 70, 229, 0.2); position: relative; overflow: hidden;">
+                    <div style="position: relative; z-index: 1;">
+                        <h3>Total Issues Submitted</h3>
+                        <div class="value" id="totalIssues">0</div>
+                    </div>
+                    <i class="ri-file-list-3-line"></i>
+                </div>
+                <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%); border: 1px solid rgba(245, 158, 11, 0.2); position: relative; overflow: hidden;">
+                    <div style="position: relative; z-index: 1;">
+                        <h3>Pending Issues</h3>
+                        <div class="value warning" id="pendingIssues" style="color: var(--warning);">0</div>
+                    </div>
+                    <i class="ri-time-line"></i>
+                </div>
+                <div class="stat-card premium" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%); border: 1px solid rgba(16, 185, 129, 0.2); position: relative; overflow: hidden;">
+                    <div style="position: relative; z-index: 1;">
+                        <h3>Resolved Issues</h3>
+                        <div class="value success" id="resolvedIssues" style="color: var(--success);">0</div>
+                    </div>
+                    <i class="ri-checkbox-circle-line"></i>
+                </div>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div class="section-header" style="margin-bottom: 16px;">
+                <h2 style="font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <i class="ri-flashlight-line" style="color: var(--warning);"></i> Quick Actions
+                </h2>
+            </div>
+            <div class="quick-actions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 32px;">
+                <button class="btn btn-primary" onclick="window.location.href='./report.html'" style="padding: 16px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; height: auto;">
+                    <i class="ri-add-circle-line" style="font-size: 24px;"></i>
+                    <span style="font-weight: 600;">Report New Issue</span>
+                </button>
+                <button class="btn btn-outline" onclick="window.location.href='./myissues.html'" style="padding: 16px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; height: auto; border: 1px solid var(--border); background: var(--card);">
+                    <i class="ri-list-check-2" style="font-size: 24px; color: var(--primary);"></i>
+                    <span style="font-weight: 600;">My Issues</span>
+                </button>
+                <button class="btn btn-outline" onclick="window.location.href='./analytics.html'" style="padding: 16px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; height: auto; border: 1px solid var(--border); background: var(--card);">
+                    <i class="ri-bar-chart-box-line" style="font-size: 24px; color: var(--success);"></i>
+                    <span style="font-weight: 600;">My Analytics</span>
+                </button>
+            </div>
+
+            <div class="dashboard-main-grid">
+                <!-- Recent Issues -->
+                <div class="recent-issues-section">
+                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h2 style="font-size: 18px; font-weight: 600;">Recent Issues</h2>
+                        <a href="./myissues.html" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500;">View All</a>
+                    </div>
+                    <div id="recentIssuesContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Content injected by Student.loadDashboard() -->
+                    </div>
+                </div>
+
+                <!-- Sidebar Content -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div class="card" style="padding: 24px; border-radius: 20px;">
+                        <div class="card-header" style="margin-bottom: 20px;">
+                            <h2 style="font-size: 16px; margin: 0;"><i class="ri-medal-line" style="color: var(--warning);"></i> My Performance</h2>
+                        </div>
+                        <div id="userRankContainer">
+                            <!-- Rank info -->
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 24px; border-radius: 20px;">
+                        <div class="card-header" style="margin-bottom: 20px;">
+                            <h2 style="font-size: 16px; margin: 0;"><i class="ri-history-line" style="color: var(--primary);"></i> Activity Timeline</h2>
+                        </div>
+                        <div id="activityTimeline">
+                            <!-- Timeline -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Chatbot UI -->
+    <div class="chatbot-wrapper">
+        <div id="chatbotPanel" class="chatbot-panel">
+            <div class="chatbot-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="ri-robot-line" style="font-size: 20px;"></i>
+                    <span style="font-weight: 600;">Campus Assistant</span>
+                </div>
+                <button onclick="toggleChatbot()" style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;"><i class="ri-close-line"></i></button>
+            </div>
+            <div id="chatbotMessages" class="chatbot-messages">
+                <div class="chat-msg bot">
+                    Hello! I'm your AI assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Ask me anything..." onkeypress="if(event.key === 'Enter') sendChatbotMessage()">
+                <button onclick="sendChatbotMessage()"><i class="ri-send-plane-fill"></i></button>
+            </div>
+        </div>
+        <button class="chatbot-btn" onclick="toggleChatbot()">
+            <i class="ri-chat-smile-3-line"></i>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/ai-agent.js"></script>
+    <script src="../js/issues.js"></script>
+    <script src="../js/bookmarks.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/charts.js"></script>
+    <script src="../js/student.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = Auth.checkAuth('student');
+            if (session) {
+                Student.loadDashboard();
+            }
+        });
+
+        function toggleChatbot() {
+            const panel = document.getElementById('chatbotPanel');
+            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function sendChatbotMessage() {
+            const input = document.getElementById('chatbotInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messages = document.getElementById('chatbotMessages');
+            messages.innerHTML += `<div class="chat-msg user">${text}</div>`;
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            setTimeout(() => {
+                const response = AIAgent.chatbot.getResponse(text);
+                messages.innerHTML += `<div class="chat-msg bot">${response}</div>`;
+                messages.scrollTop = messages.scrollHeight;
+            }, 600);
+        }
+    </script>
+</body>
+</html>
